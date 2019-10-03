@@ -59,7 +59,10 @@ exports.update = function(req, res) {
 
 
   /* Replace the listings's properties with the new properties found in req.body */
-  listing.name = 
+  listing.name = req.body.name;
+  listing.code = req.body.code;
+  listing.address = req.body.address;
+
   /*save the coordinates (located in req.results if there is an address property) */
   if(req.results) {
     listing.coordinates = {
@@ -84,12 +87,28 @@ exports.delete = function(req, res) {
   var listing = req.listing;
 
   /* Add your code to remove the listins */
-
+  listing.remove(function(err){ 
+    if (err){
+        res.status(404).send(err); 
+        console.log("Error Deleting Listing ", e); 
+      return;
+    }
+    else{
+        res.end();
+        console.log("Removal Successful");
+    }
+    })
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {
   /* Add your code */
+  Listing.find({}, function(err, data){
+    if(err){
+      throw err;
+    }
+    res.json(data);
+  }).sort({code : 1});
 };
 
 /* 
